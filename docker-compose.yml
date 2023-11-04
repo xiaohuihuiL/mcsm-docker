@@ -1,0 +1,39 @@
+version: "3"
+services:
+    mcsm-web:
+        container_name: mcsm-web
+        build:
+            context: .
+            dockerfile: dockerfile-web
+            args:
+                INSTALL_PATH: ${INSTALL_PATH-/opt/docker-mcsm}
+                TZ: ${TZ-Asia/Shanghai}
+        network_mode: "host"
+        restart: always
+        environment:
+            - PUID=0
+            - PGID=0
+            - UMASK=022
+        volumes:
+            - ${INSTALL_PATH-/opt/docker-mcsm}/releases/web/data:${INSTALL_PATH-/opt/docker-mcsm}/releases/web/data
+            - ${INSTALL_PATH-/opt/docker-mcsm}/releases/web/logs:${INSTALL_PATH-/opt/docker-mcsm}/releases/web/logs
+            - ${INSTALL_PATH-/opt/docker-mcsm}/releases/daemon/data/Config:${INSTALL_PATH-/opt/docker-mcsm}/releases/daemon/data/Config:ro
+    mcsm-daemon:
+        container_name: mcsm-daemon
+        build:
+            context: .
+            dockerfile: dockerfile-daemon
+            args:
+                INSTALL_PATH: ${INSTALL_PATH-/opt/docker-mcsm}
+                TZ: ${TZ-Asia/Shanghai}
+        network_mode: "host"
+        restart: always
+        environment:
+            - PUID=0
+            - PGID=0
+            - UMASK=022
+        volumes:
+            - ${INSTALL_PATH-/opt/docker-mcsm}/releases/daemon/data:${INSTALL_PATH-/opt/docker-mcsm}/releases/daemon/data
+            - ${INSTALL_PATH-/opt/docker-mcsm}/releases/daemon/logs:${INSTALL_PATH-/opt/docker-mcsm}/releases/daemon/logs
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+
